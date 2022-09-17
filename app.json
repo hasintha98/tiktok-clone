@@ -18,7 +18,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +30,18 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "config" : {
+        "firebase" : {
+          "apiKey": "AIzaSyBf2IMJLaxKNY-IpGrsW6HfUYv4dKXG830",
+          "authDomain": "tiktok-clone-49120.firebaseapp.com",
+          "projectId": "tiktok-clone-49120",
+          "storageBucket": "tiktok-clone-49120.appspot.com",
+          "messagingSenderId": "738467918704",
+          "appId": "1:738467918704:web:c536449ec0091803a0d5b5",
+          "measurementId": "G-H67S33YPT4"
+        }
+      } 
     }
   }
 }
