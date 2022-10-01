@@ -4,7 +4,8 @@ import { Camera, CameraType } from "expo-camera";
 import { Audio } from "expo-av";
 import * as ImagePicker from "expo-image-picker"
 import * as MediaLibrary from "expo-media-library"
-import { useIsFocused } from '@react-navigation/native';
+import * as VideoThumbnails from 'expo-video-thumbnails';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import styles from './styles';
 import { Feather } from '@expo/vector-icons'
 export default function CameraScreen() {
@@ -22,6 +23,8 @@ export default function CameraScreen() {
     const [isCameraReady, setIsCameraReady] = useState(false)
 
     const isFocused = useIsFocused()
+
+    const navigation = useNavigation()
     useEffect(() => {
         (async () => {
             const cameraStatus = await Camera.requestCameraPermissionsAsync();
@@ -54,7 +57,9 @@ export default function CameraScreen() {
                 if (videoRecordPromise) {
                     const data = await videoRecordPromise;
                     const source = data.uri;
-                    //TODO: passvideo uri to save
+                    let sourceThumb = await generateThumbnail(source)
+                    //TODO: pass video uri to save
+                    navigation.navigate('savePost', {source, sourceThumb})
                 }
             } catch (error) {
                 console.warn(error)
@@ -69,7 +74,6 @@ export default function CameraScreen() {
     }
 
     const pickFromGallery = async () => {
-        console.log("called")
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
@@ -78,9 +82,26 @@ export default function CameraScreen() {
         })
 
         if (!result.cancelled) {
-            //TODO: passvideo uri to save
+            let sourceThumb = await generateThumbnail(result.uri)
+            navigation.navigate('savePost', {source: result.uri, sourceThumb})
         }
     }
+
+    const generateThumbnail = async (source) => {
+        try {
+            console.log("source", source)
+          const { uri } = await VideoThumbnails.getThumbnailAsync(
+            source,
+            {
+              time: 15000,
+            }
+          );
+          console.log("genarate", uri)
+          return uri;
+        } catch (e) {
+          console.warn(e);
+        }
+      };
 
     if (!hasCameraPermissions || !hasAudioPermissions || !hasGalleryPermissions) {
         return (
@@ -88,7 +109,6 @@ export default function CameraScreen() {
         )
     }
 
-console.log(galleryItems[0])
 
     return (
         <View style={styles.container}>

@@ -1,6 +1,7 @@
 import firebase from 'firebase/app'
 import { USER_STATE_CHANGE } from '../constants'
 import 'firebase/firestore';
+import { getPostsByUser } from './post';
 require('firebase/firestore')
 require('firebase/firebase-auth')
 
@@ -8,6 +9,7 @@ export const userAuthStateListener = () => dispatch => {
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
             dispatch(getCurrentUserData())
+            dispatch(getPostsByUser(firebase.auth().currentUser.uid))
         } else {
             dispatch({ type: USER_STATE_CHANGE, currentUser: null, loaded: true })
         }
